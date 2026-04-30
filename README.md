@@ -105,9 +105,6 @@ Retention per interval:
 Optional recursive mode (inheritable):
 - com.zfsautosnap:recursive=on|off
 
-Optional for frequently:
-- com.zfsautosnap:frequently-minutes=<number> (default: 15)
-
 Default retention when keep-* is not set:
 - keep-monthly=12
 - keep-weekly=8
@@ -128,7 +125,6 @@ zfs set com.zfsautosnap:keep-monthly=12 tank/data
 
 zfs set com.zfsautosnap:frequently=on tank/data
 zfs set com.zfsautosnap:keep-frequently=96 tank/data
-zfs set com.zfsautosnap:frequently-minutes=15 tank/data
 
 # Enable recursion on parent (applies to children via inheritance)
 zfs set com.zfsautosnap:recursive=on tank/data

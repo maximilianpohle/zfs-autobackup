@@ -27,7 +27,6 @@ DEFAULT_KEEP = {
     "daily": 31,
     "frequently": 96,
 }
-DEFAULT_FREQUENTLY_MINUTES = 15
 LOGGER_NAME = "zfs-autosnapshot"
 
 
@@ -58,7 +57,6 @@ logger = setup_logger()
 class DatasetPolicy:
     enabled: bool
     keep: int
-    frequently_minutes: int
     recursive: bool
 
 
@@ -107,24 +105,16 @@ def get_policy(dataset: str, interval: str) -> DatasetPolicy:
     keep_val = get_dataset_property(dataset, keep_prop)
     recursive_val = get_dataset_property(dataset, f"{PREFIX}:recursive")
 
-    freq_minutes = DEFAULT_FREQUENTLY_MINUTES
-    if interval == "frequently":
-        freq_prop = f"{PREFIX}:frequently-minutes"
-        freq_val = get_dataset_property(dataset, freq_prop)
-        freq_minutes = max(1, parse_int(freq_val, DEFAULT_FREQUENTLY_MINUTES))
-
     return DatasetPolicy(
         enabled=parse_bool(enabled_val),
         keep=parse_int(keep_val, DEFAULT_KEEP[interval]),
-        frequently_minutes=freq_minutes,
         recursive=parse_bool(recursive_val),
     )
 
 
-def period_bucket(interval: str, now: dt.datetime, frequently_minutes: int) -> str:
+def period_bucket(interval: str, now: dt.datetime) -> str:
     # Always use the exact current timestamp; no rounding by interval.
     _ = interval
-    _ = frequently_minutes
     return now.strftime("%Y-%m-%d-%H-%M-%S-%f")
 
 
@@ -214,7 +204,7 @@ def process_dataset(dataset: str, interval: str, now: dt.datetime, dry_run: bool
     if not policy.enabled:
         return False, 0
 
-    bucket = period_bucket(interval, now, policy.frequently_minutes)
+    bucket = period_bucket(interval, now)
     created = ensure_snapshot(
         dataset,
         interval,
