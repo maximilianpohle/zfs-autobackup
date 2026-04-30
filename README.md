@@ -4,6 +4,8 @@ A small zfs-auto-snapshot alternative controlled via dataset properties.
 
 This repository is Cron-first by design because installation is usually faster and simpler than setting up multiple systemd units.
 
+Snapshot naming uses the exact current timestamp for every run (no interval-based rounding).
+
 Supported intervals:
 - monthly
 - weekly

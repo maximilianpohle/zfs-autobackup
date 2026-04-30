@@ -4,7 +4,7 @@
 Features:
 - Per-dataset activation via ZFS properties for intervals: monthly/weekly/daily/frequently
 - Per-dataset retention (how many snapshots to keep per interval)
-- Idempotent period snapshots (only one snapshot per period bucket)
+- Snapshot names use the current timestamp for every run
 """
 
 from __future__ import annotations
@@ -122,17 +122,10 @@ def get_policy(dataset: str, interval: str) -> DatasetPolicy:
 
 
 def period_bucket(interval: str, now: dt.datetime, frequently_minutes: int) -> str:
-    if interval == "monthly":
-        return now.strftime("%Y-%m")
-    if interval == "weekly":
-        iso_year, iso_week, _ = now.isocalendar()
-        return f"{iso_year}-W{iso_week:02d}"
-    if interval == "daily":
-        return now.strftime("%Y-%m-%d")
-    # frequently
-    floored_minute = (now.minute // frequently_minutes) * frequently_minutes
-    bucket = now.replace(minute=floored_minute, second=0, microsecond=0)
-    return bucket.strftime("%Y-%m-%d-%H-%M")
+    # Always use the exact current timestamp; no rounding by interval.
+    _ = interval
+    _ = frequently_minutes
+    return now.strftime("%Y-%m-%d-%H-%M-%S-%f")
 
 
 def snapshot_name(interval: str, bucket: str) -> str:
