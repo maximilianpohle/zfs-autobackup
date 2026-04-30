@@ -2,15 +2,22 @@
 
 A small zfs-auto-snapshot alternative controlled via dataset properties.
 
+This project is intended as a drop-in replacement for zfs-auto-snapshot.
+
 This repository is Cron-first by design because installation is usually faster and simpler than setting up multiple systemd units.
 
 Snapshot naming uses the exact current timestamp for every run (no interval-based rounding).
+Snapshot names are compatible with zfs-auto-snapshot style:
+- zfs-auto-snap_monthly-YYYY-MM-DD-HHMM
+- zfs-auto-snap_weekly-YYYY-MM-DD-HHMM
+- zfs-auto-snap_daily-YYYY-MM-DD-HHMM
+- zfs-auto-snap_frequent-YYYY-MM-DD-HHMM
 
 Supported intervals:
 - monthly
 - weekly
 - daily
-- frequently
+- frequent
 
 ## Installation
 
@@ -67,7 +74,7 @@ Installed Cron file:
 Default schedule:
 
 ```cron
-*/15 * * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot frequently
+*/15 * * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot frequent
 10 0 * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot daily
 20 0 * * 1 root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot weekly
 30 0 1 * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot monthly
@@ -81,7 +88,7 @@ To customize timing, edit /etc/cron.d/zfs-autosnapshot and reload cron if needed
 python3 zfs_autosnapshot.py monthly
 python3 zfs_autosnapshot.py weekly
 python3 zfs_autosnapshot.py daily
-python3 zfs_autosnapshot.py frequently
+python3 zfs_autosnapshot.py frequent
 ```
 
 Process only specific root datasets:
@@ -102,13 +109,13 @@ Enable per interval:
 - com.zfsautosnap:monthly=on|off
 - com.zfsautosnap:weekly=on|off
 - com.zfsautosnap:daily=on|off
-- com.zfsautosnap:frequently=on|off
+- com.zfsautosnap:frequent=on|off
 
 Retention per interval:
 - com.zfsautosnap:keep-monthly=<number>
 - com.zfsautosnap:keep-weekly=<number>
 - com.zfsautosnap:keep-daily=<number>
-- com.zfsautosnap:keep-frequently=<number>
+- com.zfsautosnap:keep-frequent=<number>
 
 Optional recursive mode (inheritable):
 - com.zfsautosnap:recursive=on|off
@@ -117,7 +124,7 @@ Default retention when keep-* is not set:
 - keep-monthly=12
 - keep-weekly=8
 - keep-daily=31
-- keep-frequently=96
+- keep-frequent=96
 
 Example property setup:
 
@@ -131,8 +138,8 @@ zfs set com.zfsautosnap:keep-weekly=8 tank/data
 zfs set com.zfsautosnap:monthly=on tank/data
 zfs set com.zfsautosnap:keep-monthly=12 tank/data
 
-zfs set com.zfsautosnap:frequently=on tank/data
-zfs set com.zfsautosnap:keep-frequently=96 tank/data
+zfs set com.zfsautosnap:frequent=on tank/data
+zfs set com.zfsautosnap:keep-frequent=96 tank/data
 
 # Enable recursion on parent (applies to children via inheritance)
 zfs set com.zfsautosnap:recursive=on tank/data

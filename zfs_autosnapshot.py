@@ -2,7 +2,7 @@
 """Lightweight zfs-auto-snapshot alternative.
 
 Features:
-- Per-dataset activation via ZFS properties for intervals: monthly/weekly/daily/frequently
+- Per-dataset activation via ZFS properties for intervals: monthly/weekly/daily/frequent
 - Per-dataset retention (how many snapshots to keep per interval)
 - Snapshot names use the current timestamp for every run
 """
@@ -20,12 +20,12 @@ from dataclasses import dataclass
 from typing import Iterable
 
 PREFIX = "com.zfsautosnap"
-SUPPORTED_INTERVALS = ("monthly", "weekly", "daily", "frequently")
+SUPPORTED_INTERVALS = ("monthly", "weekly", "daily", "frequent")
 DEFAULT_KEEP = {
     "monthly": 12,
     "weekly": 8,
     "daily": 31,
-    "frequently": 96,
+    "frequent": 6,
 }
 LOGGER_NAME = "zfs-autosnapshot"
 
@@ -115,11 +115,11 @@ def get_policy(dataset: str, interval: str) -> DatasetPolicy:
 def period_bucket(interval: str, now: dt.datetime) -> str:
     # Always use the exact current timestamp; no rounding by interval.
     _ = interval
-    return now.strftime("%Y-%m-%d-%H-%M-%S-%f")
+    return now.strftime("%Y-%m-%d-%H%M")
 
 
 def snapshot_name(interval: str, bucket: str) -> str:
-    return f"autosnap-{interval}-{bucket}"
+    return f"zfs-auto-snap_{interval}-{bucket}"
 
 
 def list_dataset_snapshots(dataset: str, interval: str) -> list[str]:
@@ -135,7 +135,7 @@ def list_dataset_snapshots(dataset: str, interval: str) -> list[str]:
         "-r",
         dataset,
     ])
-    prefix = f"{dataset}@autosnap-{interval}-"
+    prefix = f"{dataset}@zfs-auto-snap_{interval}-"
     return [line.strip() for line in output.splitlines() if line.startswith(prefix)]
 
 
@@ -228,7 +228,7 @@ def is_descendant_dataset(dataset: str, parents: list[str]) -> bool:
 
 def parse_args(argv: Iterable[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Per-dataset ZFS autosnapshot (monthly/weekly/daily/frequently)."
+        description="Per-dataset ZFS autosnapshot (monthly/weekly/daily/frequent)."
     )
     parser.add_argument("interval", choices=SUPPORTED_INTERVALS, help="Snapshot interval")
     parser.add_argument(
