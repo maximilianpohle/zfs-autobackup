@@ -1,0 +1,8 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# zfs-autosnapshot schedule
+*/15 * * * * root __PYTHON__ __SCRIPT__ frequently
+10 0 * * * root __PYTHON__ __SCRIPT__ daily
+20 0 * * 1 root __PYTHON__ __SCRIPT__ weekly
+30 0 1 * * root __PYTHON__ __SCRIPT__ monthly
