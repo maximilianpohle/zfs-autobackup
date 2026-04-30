@@ -20,11 +20,12 @@ from dataclasses import dataclass
 from typing import Iterable
 
 PREFIX = "com.zfsautosnap"
-SUPPORTED_INTERVALS = ("monthly", "weekly", "daily", "frequent")
+SUPPORTED_INTERVALS = ("monthly", "weekly", "daily", "hourly", "frequent")
 DEFAULT_KEEP = {
     "monthly": 12,
     "weekly": 8,
     "daily": 31,
+    "hourly": 8,
     "frequent": 6,
 }
 LOGGER_NAME = "zfs-autosnapshot"

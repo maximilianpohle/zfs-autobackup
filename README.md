@@ -11,12 +11,14 @@ Snapshot names are compatible with zfs-auto-snapshot style:
 - zfs-auto-snap_monthly-YYYY-MM-DD-HHMM
 - zfs-auto-snap_weekly-YYYY-MM-DD-HHMM
 - zfs-auto-snap_daily-YYYY-MM-DD-HHMM
+- zfs-auto-snap_hourly-YYYY-MM-DD-HHMM
 - zfs-auto-snap_frequent-YYYY-MM-DD-HHMM
 
 Supported intervals:
 - monthly
 - weekly
 - daily
+- hourly
 - frequent
 
 ## Installation
@@ -75,6 +77,7 @@ Default schedule:
 
 ```cron
 */15 * * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot frequent
+0 * * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot hourly
 10 0 * * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot daily
 20 0 * * 1 root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot weekly
 30 0 1 * * root /usr/bin/python3 /usr/local/sbin/zfs-autosnapshot monthly
@@ -88,6 +91,7 @@ To customize timing, edit /etc/cron.d/zfs-autosnapshot and reload cron if needed
 python3 zfs_autosnapshot.py monthly
 python3 zfs_autosnapshot.py weekly
 python3 zfs_autosnapshot.py daily
+python3 zfs_autosnapshot.py hourly
 python3 zfs_autosnapshot.py frequent
 ```
 
@@ -109,12 +113,14 @@ Enable per interval:
 - com.zfsautosnap:monthly=on|off
 - com.zfsautosnap:weekly=on|off
 - com.zfsautosnap:daily=on|off
+- com.zfsautosnap:hourly=on|off
 - com.zfsautosnap:frequent=on|off
 
 Retention per interval:
 - com.zfsautosnap:keep-monthly=<number>
 - com.zfsautosnap:keep-weekly=<number>
 - com.zfsautosnap:keep-daily=<number>
+- com.zfsautosnap:keep-hourly=<number>
 - com.zfsautosnap:keep-frequent=<number>
 
 Optional recursive mode (inheritable):
@@ -124,6 +130,7 @@ Default retention when keep-* is not set:
 - keep-monthly=12
 - keep-weekly=8
 - keep-daily=31
+- keep-hourly=24
 - keep-frequent=96
 
 Example property setup:
@@ -137,6 +144,9 @@ zfs set com.zfsautosnap:keep-weekly=8 tank/data
 
 zfs set com.zfsautosnap:monthly=on tank/data
 zfs set com.zfsautosnap:keep-monthly=12 tank/data
+
+zfs set com.zfsautosnap:hourly=on tank/data
+zfs set com.zfsautosnap:keep-hourly=24 tank/data
 
 zfs set com.zfsautosnap:frequent=on tank/data
 zfs set com.zfsautosnap:keep-frequent=96 tank/data
