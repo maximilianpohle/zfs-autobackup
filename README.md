@@ -43,12 +43,20 @@ The installer does the following:
 - installs the executable to /usr/local/sbin/zfs-autosnapshot
 - installs Cron schedule file to /etc/cron.d/zfs-autosnapshot
 - downloads script and cron template from GitHub RAW URLs
+- on apt-based systems, aborts if conflicting package zfs-auto-snapshot is installed
 
 Optional override variables for custom branch/repo:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main/scripts/install.sh | \
 	sudo RAW_BASE_URL="https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main" sh
+```
+
+Optional override for apt conflict package name:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main/scripts/install.sh | \
+	sudo APT_CONFLICT_PACKAGE="zfs-auto-snapshot" sh
 ```
 
 ## Cron schedule
