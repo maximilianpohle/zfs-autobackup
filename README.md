@@ -25,15 +25,29 @@ cd <repo>
 sudo sh scripts/install.sh
 ```
 
-### Option 2: One-liner installer
+### Option 2: Raw one-liner installer (no clone)
 
 ```bash
-sudo sh -c 'tmp="$(mktemp -d)" && git clone --depth 1 https://github.com/<owner>/<repo>.git "$tmp" && sh "$tmp/scripts/install.sh" && rm -rf "$tmp"'
+curl -fsSL https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main/scripts/install.sh | sudo sh
+```
+
+Alternative with `wget`:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main/scripts/install.sh | sudo sh
 ```
 
 The installer does the following:
 - installs the executable to /usr/local/sbin/zfs-autosnapshot
 - installs Cron schedule file to /etc/cron.d/zfs-autosnapshot
+- downloads script and cron template from GitHub RAW URLs
+
+Optional override variables for custom branch/repo:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main/scripts/install.sh | \
+	sudo RAW_BASE_URL="https://raw.githubusercontent.com/maximilianpohle/zfs-autobackup/main" sh
+```
 
 ## Cron schedule
 
