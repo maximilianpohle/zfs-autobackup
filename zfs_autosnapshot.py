@@ -40,14 +40,24 @@ def setup_logger() -> logging.Logger:
         return logger
 
     address = "/dev/log" if os.path.exists("/dev/log") else "/var/run/syslog"
+    uses_syslog = True
     try:
         handler = logging.handlers.SysLogHandler(address=address)
     except OSError:
         # Fallback to stderr when no syslog socket is available.
+        uses_syslog = False
         handler = logging.StreamHandler(sys.stderr)
 
     handler.setFormatter(logging.Formatter(f"{LOGGER_NAME}[%(process)d]: %(levelname)s %(message)s"))
     logger.addHandler(handler)
+
+    # Mirror errors to stderr so they are always visible for CLI usage.
+    if uses_syslog:
+        err_handler = logging.StreamHandler(sys.stderr)
+        err_handler.setLevel(logging.ERROR)
+        err_handler.setFormatter(logging.Formatter(f"{LOGGER_NAME}[%(process)d]: %(levelname)s %(message)s"))
+        logger.addHandler(err_handler)
+
     return logger
 
 

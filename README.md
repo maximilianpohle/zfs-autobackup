@@ -157,7 +157,8 @@ zfs set com.zfsautosnap:recursive=on tank/data
 
 ## Logging
 
-The script writes action and error logs to syslog.
+The script writes action and status logs to syslog.
+Error logs are additionally mirrored to stderr so failures are visible in direct CLI runs.
 
 Examples:
 
